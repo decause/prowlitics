@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from knowledge.model import init_model, metadata, Entity, DBSession
-from kitchen.text.converters import to_unicode
+from kitchen.text.converters import to_unicode, to_bytes
 
 import sunlight
 engine = create_engine('sqlite:///knowledge.db')
@@ -10,7 +10,7 @@ metadata.create_all(engine)
 # Query all the Entities out of knowledge
 knowledge_query = DBSession.query(Entity).all()
 for entity in knowledge_query:
-    print entity, entity.facts.values()
+    print to_bytes(entity), to_bytes(entity.facts.values())
 
 ny_legs = sunlight.openstates.legislators(state='ny')
 
@@ -37,10 +37,10 @@ def inject_knowledge():
 
     knowledge = DBSession
     for leg in ny_legs:
-        character = Entity(u'%s' % leg['full_name'])
-        character[u'name'] = (u'%s' % leg['full_name'])
+        character = Entity(u'%s' % to_unicode(leg['full_name']))
+        character[u'name'] = (u'%s' % to_unicode(leg['full_name']))
         for key, value in leg.items():
-            character[key] = to_unicode(value)
+            character[to_unicode(key)] = to_unicode(value)
         knowledge.add(character)
         knowledge.commit()
 
@@ -51,6 +51,6 @@ inject_knowledge()
 def the_facts():
     knowledge_query = DBSession.query(Entity).all()
     for entity in knowledge_query:
-        print entity, entity.facts.values
+        print to_bytes(entity), to_bytes(entity.facts.values())
 
 the_facts()

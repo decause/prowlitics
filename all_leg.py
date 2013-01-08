@@ -8,7 +8,6 @@ engine = create_engine('sqlite:///knowledge.db')
 init_model(engine)
 metadata.create_all(engine)
 
-#ny_legs = sunlight.openstates.legislators(state='ny')
 all_legs = sunlight.openstates.legislators()
 
 
@@ -49,11 +48,11 @@ def inject_knowledge():
 inject_knowledge()
 
 
-# Query all the Entities out of knowledge
+# Query all the Entities, print all their facts
 def the_facts():
     knowledge_query = DBSession.query(Entity).all()
     for entity in knowledge_query:
         print to_bytes(entity), to_bytes(entity.facts.values())
 
 
-#the_facts()
+the_facts()
